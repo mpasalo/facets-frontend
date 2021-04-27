@@ -7,6 +7,7 @@ import {
     deleteFirstChild,
     getTrashedClassification,
     restoreClassification,
+    deleteSecondChild,
 } from "../functions";
 import CheckboxesSecondChild from "./checkboxesSecondChild";
 import CheckboxesThirdChild from "./checkboxesThirdChild";
@@ -121,6 +122,39 @@ class facets extends Component {
         });
     };
 
+    deleteSecondChildCategory = (id) => {
+        deleteSecondChild(id);
+
+        let collection = this.state.collection;
+        collection.forEach((gender) => {
+            gender.item_classifications.forEach((classification) => {
+                classification.types = classification.types.filter(
+                    (type) => type.id !== id
+                );
+                classification.is_checked = !classification.is_checked;
+            });
+        });
+
+        this.setState({ collection: collection });
+    };
+
+    deleteThirdChildCategory = (id) => {
+        let collection = this.state.collection;
+        collection.forEach((gender) => {
+            gender.item_classifications.forEach((classification) => {
+                classification.types.forEach((type) => {
+                    if (classification.is_checked === true) {
+                        classification.is_checked = !classification.is_checked;
+                    }
+
+                    type.items = type.items.filter((item) => item.id !== id);
+                });
+            });
+        });
+
+        this.setState({ collection: collection });
+    };
+
     restoreAll = () => {
         restore().then(() => {
             this.setState({
@@ -163,6 +197,14 @@ class facets extends Component {
                 });
             });
         });
+
+        this.setState({ collection: collection });
+    };
+
+    deleteAllSelected = () => {
+        let collection = this.state.collection;
+
+        collection = collection.filter((gender) => gender.is_checked !== true);
 
         this.setState({ collection: collection });
     };
@@ -334,6 +376,12 @@ class facets extends Component {
                                             Restore Deleted Classifications
                                         </button>
                                     )}
+                                    <button
+                                        onClick={() => this.deleteAllSelected()}
+                                        className="btn btn-sm btn-danger"
+                                    >
+                                        Delete All Selected
+                                    </button>
                                     {gender.is_checked &&
                                         gender.item_classifications.map(
                                             (classification, i) => (
@@ -388,6 +436,10 @@ class facets extends Component {
                                                                             key={
                                                                                 type.id
                                                                             }
+                                                                            deleteSecondChildCategory={
+                                                                                this
+                                                                                    .deleteSecondChildCategory
+                                                                            }
                                                                             checkAllSecondChildDescendants={this.checkAllSecondChildDescendants(
                                                                                 type.id
                                                                             )}
@@ -411,6 +463,10 @@ class facets extends Component {
                                                                                     <CheckboxesThirdChild
                                                                                         key={
                                                                                             item.id
+                                                                                        }
+                                                                                        deleteThirdChildCategory={
+                                                                                            this
+                                                                                                .deleteThirdChildCategory
                                                                                         }
                                                                                         toggleThirdChildCheckbox={
                                                                                             this

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { DeleteOutlined } from "@ant-design/icons";
 
 class checkboxesThirdChild extends Component {
     state = {
@@ -21,7 +22,17 @@ class checkboxesThirdChild extends Component {
                         }
                         checked={this.props.checked}
                     />
-                    <b>{this.props.item.name}</b>
+                    <b>{this.props.item.name}</b> -
+                    <button
+                        onClick={() =>
+                            this.props.deleteThirdChildCategory(
+                                this.state.item.id
+                            )
+                        }
+                        className="btn btn-sm btn-danger"
+                    >
+                        <DeleteOutlined />
+                    </button>
                 </label>
             </div>
         );

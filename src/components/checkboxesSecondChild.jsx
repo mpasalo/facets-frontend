@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { DeleteOutlined } from "@ant-design/icons";
 
 class checkboxesSecondChild extends Component {
     state = {
@@ -26,6 +27,16 @@ class checkboxesSecondChild extends Component {
                         onClick={this.props.checkAllSecondChildDescendants}
                     />{" "}
                     Select All
+                    <button
+                        onClick={() =>
+                            this.props.deleteSecondChildCategory(
+                                this.state.type.id
+                            )
+                        }
+                        className="btn btn-sm btn-danger"
+                    >
+                        <DeleteOutlined />
+                    </button>
                 </label>
             </div>
         );

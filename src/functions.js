@@ -78,3 +78,9 @@ export const restoreClassification = (id) => {
             return result.data;
         });
 };
+
+export const deleteSecondChild = (id) => {
+    api().delete(process.env.REACT_APP_URL + `/api/item-types/${id}`, {
+        headers: { "Content-Type": "application/json" },
+    });
+};

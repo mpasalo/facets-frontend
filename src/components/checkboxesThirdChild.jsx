@@ -12,8 +12,16 @@ class checkboxesThirdChild extends Component {
                 id="checkboxThirdChild"
             >
                 <label>
-                    <input type="checkbox" />
-                    {this.props.item.name}
+                    <input
+                        type="checkbox"
+                        onChange={() =>
+                            this.props.toggleThirdChildCheckbox(
+                                this.state.item.id
+                            )
+                        }
+                        checked={this.props.checked}
+                    />
+                    <b>{this.props.item.name}</b>
                 </label>
             </div>
         );

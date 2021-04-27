@@ -13,7 +13,7 @@ import CheckboxesThirdChild from "./checkboxesThirdChild";
 import LogInModal from "./logInModal";
 import "antd/dist/antd.css";
 import { Menu } from "antd";
-import { LogoutOutlined } from "@ant-design/icons";
+import { LogoutOutlined, DeleteOutlined } from "@ant-design/icons";
 import "../index.css";
 
 class facets extends Component {
@@ -69,12 +69,6 @@ class facets extends Component {
             this.setState({
                 collection: [...data],
             });
-        });
-    };
-
-    toggleFirstChildVisibility = () => {
-        this.setState({
-            isFirstChildVisible: !this.state.isFirstChildVisible,
         });
     };
 
@@ -155,6 +149,124 @@ class facets extends Component {
         });
     };
 
+    handleAllChecked = (event) => {
+        let collection = this.state.collection;
+        collection.forEach((gender) => {
+            gender.is_checked = event.target.checked;
+            gender.item_classifications.forEach((classification) => {
+                classification.is_checked = event.target.checked;
+                classification.types.forEach((type) => {
+                    type.is_checked = event.target.checked;
+                    type.items.forEach(
+                        (item) => (item.is_checked = event.target.checked)
+                    );
+                });
+            });
+        });
+
+        this.setState({ collection: collection });
+    };
+
+    checkAllFirstChildDescendants = (event) => {
+        let collection = this.state.collection;
+        collection.forEach((gender) =>
+            gender.item_classifications.forEach((classification) => {
+                classification.is_checked = event.target.checked;
+                classification.types.forEach((type) => {
+                    type.is_checked = event.target.checked;
+                    type.items.forEach(
+                        (item) => (item.is_checked = event.target.checked)
+                    );
+                });
+            })
+        );
+
+        this.setState({ collection: collection });
+    };
+
+    checkAllSecondChildDescendants = (id) => (event) => {
+        let collection = this.state.collection;
+        collection.forEach((gender) =>
+            gender.item_classifications.forEach((classification) =>
+                classification.types.forEach((type) => {
+                    if (type.id === id) {
+                        type.is_checked = event.target.checked;
+                    }
+
+                    type.items.forEach((item) => {
+                        if (item.item_type_id === id) {
+                            item.is_checked = event.target.checked;
+                        }
+                    });
+                })
+            )
+        );
+
+        this.setState({ collection: collection });
+    };
+
+    toggleParentCheckbox = (id) => {
+        let collection = this.state.collection;
+        collection.forEach((gender) => {
+            if (gender.id === id) {
+                gender.is_checked = !gender.is_checked;
+            }
+        });
+        this.setState({ collection: collection });
+    };
+
+    toggleParentCheckbox = (id) => {
+        let collection = this.state.collection;
+        collection.forEach((gender) => {
+            if (gender.id === id) {
+                gender.is_checked = !gender.is_checked;
+            }
+        });
+        this.setState({ collection: collection });
+    };
+
+    toggleFirstChildCheckbox = (id) => {
+        let collection = this.state.collection;
+        collection.forEach((gender) =>
+            gender.item_classifications.forEach((classification) => {
+                if (classification.id === id) {
+                    classification.is_checked = !classification.is_checked;
+                }
+            })
+        );
+        this.setState({ collection: collection });
+    };
+
+    toggleSecondChildCheckbox = (id) => {
+        let collection = this.state.collection;
+        collection.forEach((gender) =>
+            gender.item_classifications.forEach((classification) =>
+                classification.types.forEach((type) => {
+                    if (type.id === id) {
+                        type.is_checked = !type.is_checked;
+                    }
+                })
+            )
+        );
+        this.setState({ collection: collection });
+    };
+
+    toggleThirdChildCheckbox = (id) => {
+        let collection = this.state.collection;
+        collection.forEach((gender) =>
+            gender.item_classifications.forEach((classification) =>
+                classification.types.forEach((type) =>
+                    type.items.forEach((item) => {
+                        if (item.id === id) {
+                            item.is_checked = !item.is_checked;
+                        }
+                    })
+                )
+            )
+        );
+        this.setState({ collection: collection });
+    };
+
     render() {
         return (
             <div>
@@ -182,7 +294,6 @@ class facets extends Component {
                     token={this.state.token}
                     logInModalVisiblity={this.state.logInModalVisiblity}
                 />
-
                 <div className="container">
                     {this.state.collection.length > 0 ? (
                         this.state.collection.map((gender, i) => (
@@ -190,18 +301,25 @@ class facets extends Component {
                                 <label>
                                     <input
                                         type="checkbox"
+                                        checked={gender.is_checked}
                                         onChange={() =>
-                                            this.toggleFirstChildVisibility()
+                                            this.toggleParentCheckbox(gender.id)
                                         }
                                     />
-                                    {gender.name}{" "}
+                                    <b>{gender.name}</b> -
+                                    <input
+                                        type="checkbox"
+                                        onClick={this.handleAllChecked}
+                                        value="checkedall"
+                                    />{" "}
+                                    Select All
                                     <button
                                         onClick={() =>
                                             this.deleteParentCategory(gender.id)
                                         }
                                         className="btn btn-sm btn-danger"
                                     >
-                                        Delete
+                                        <DeleteOutlined />
                                     </button>
                                     {this.state.trashedClassification.length >
                                         0 && (
@@ -216,7 +334,7 @@ class facets extends Component {
                                             Restore Deleted Classifications
                                         </button>
                                     )}
-                                    {this.state.isFirstChildVisible &&
+                                    {gender.is_checked &&
                                         gender.item_classifications.map(
                                             (classification, i) => (
                                                 <div key={i}>
@@ -226,12 +344,30 @@ class facets extends Component {
                                                                 classification.id
                                                             }
                                                             type="checkbox"
+                                                            checked={
+                                                                classification.is_checked
+                                                            }
                                                             onChange={() =>
-                                                                this.toggleSecondChildVisibility()
+                                                                this.toggleFirstChildCheckbox(
+                                                                    classification.id
+                                                                )
                                                             }
                                                             id="checkboxFirstChild"
                                                         />
-                                                        {classification.name}
+                                                        <b>
+                                                            {
+                                                                classification.name
+                                                            }
+                                                        </b>
+                                                        -
+                                                        <input
+                                                            type="checkbox"
+                                                            onClick={
+                                                                this
+                                                                    .checkAllFirstChildDescendants
+                                                            }
+                                                        />{" "}
+                                                        Select All
                                                         <button
                                                             onClick={() =>
                                                                 this.deleteFirstChildCategory(
@@ -240,42 +376,55 @@ class facets extends Component {
                                                             }
                                                             className="btn btn-sm btn-danger"
                                                         >
-                                                            Delete
+                                                            <DeleteOutlined />
                                                         </button>
-                                                        {this.state
-                                                            .isSecondChildVisible &&
+                                                        {classification.is_checked &&
                                                             classification.types.map(
                                                                 (type, i) => (
                                                                     <div
                                                                         key={i}
                                                                     >
                                                                         <CheckboxesSecondChild
-                                                                            toggleThirdChildVisibility={
-                                                                                this
-                                                                                    .toggleThirdChildVisibility
-                                                                            }
                                                                             key={
                                                                                 type.id
+                                                                            }
+                                                                            checkAllSecondChildDescendants={this.checkAllSecondChildDescendants(
+                                                                                type.id
+                                                                            )}
+                                                                            toggleSecondChildCheckbox={
+                                                                                this
+                                                                                    .toggleSecondChildCheckbox
+                                                                            }
+                                                                            checked={
+                                                                                type.is_checked
                                                                             }
                                                                             type={
                                                                                 type
                                                                             }
                                                                         />
 
-                                                                        {type.items.map(
-                                                                            (
-                                                                                item
-                                                                            ) => (
-                                                                                <CheckboxesThirdChild
-                                                                                    item={
-                                                                                        item
-                                                                                    }
-                                                                                    key={
-                                                                                        item.id
-                                                                                    }
-                                                                                />
-                                                                            )
-                                                                        )}
+                                                                        {type.is_checked &&
+                                                                            type.items.map(
+                                                                                (
+                                                                                    item
+                                                                                ) => (
+                                                                                    <CheckboxesThirdChild
+                                                                                        key={
+                                                                                            item.id
+                                                                                        }
+                                                                                        toggleThirdChildCheckbox={
+                                                                                            this
+                                                                                                .toggleThirdChildCheckbox
+                                                                                        }
+                                                                                        checked={
+                                                                                            item.is_checked
+                                                                                        }
+                                                                                        item={
+                                                                                            item
+                                                                                        }
+                                                                                    />
+                                                                                )
+                                                                            )}
                                                                     </div>
                                                                 )
                                                             )}

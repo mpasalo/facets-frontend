@@ -12,13 +12,20 @@ class checkboxesSecondChild extends Component {
                     <input
                         type="checkbox"
                         id="checkboxSecondChild"
+                        checked={this.props.checked}
                         onChange={() =>
-                            this.props.toggleThirdChildVisibility(
+                            this.props.toggleSecondChildCheckbox(
                                 this.state.type.id
                             )
                         }
                     />
-                    {this.state.type.name}
+                    <b>{this.state.type.name}</b>
+                    -
+                    <input
+                        type="checkbox"
+                        onClick={this.props.checkAllSecondChildDescendants}
+                    />{" "}
+                    Select All
                 </label>
             </div>
         );

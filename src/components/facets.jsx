@@ -10,7 +10,6 @@ import {
     deleteSecondChild,
 } from "../functions";
 import CheckboxesSecondChild from "./checkboxesSecondChild";
-import CheckboxesThirdChild from "./checkboxesThirdChild";
 import LogInModal from "./logInModal";
 import "antd/dist/antd.css";
 import { Menu } from "antd";
@@ -131,7 +130,9 @@ class facets extends Component {
                 classification.types = classification.types.filter(
                     (type) => type.id !== id
                 );
-                classification.is_checked = !classification.is_checked;
+                if (classification.is_checked === false) {
+                    classification.is_checked = !classification.is_checked;
+                }
             });
         });
 
@@ -143,7 +144,7 @@ class facets extends Component {
         collection.forEach((gender) => {
             gender.item_classifications.forEach((classification) => {
                 classification.types.forEach((type) => {
-                    if (classification.is_checked === true) {
+                    if (classification.is_checked === false) {
                         classification.is_checked = !classification.is_checked;
                     }
 
@@ -336,172 +337,136 @@ class facets extends Component {
                     token={this.state.token}
                     logInModalVisiblity={this.state.logInModalVisiblity}
                 />
-                <div className="container">
-                    {this.state.collection.length > 0 ? (
-                        this.state.collection.map((gender, i) => (
-                            <div key={i}>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        checked={gender.is_checked}
-                                        onChange={() =>
-                                            this.toggleParentCheckbox(gender.id)
-                                        }
-                                    />
-                                    <b>{gender.name}</b> -
-                                    <input
-                                        type="checkbox"
-                                        onClick={this.handleAllChecked}
-                                        value="checkedall"
-                                    />{" "}
-                                    Select All
+
+                {this.state.collection.length > 0 ? (
+                    this.state.collection.map((gender, i) => (
+                        <div className="flex-container" key={i}>
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    checked={gender.is_checked}
+                                    onChange={() =>
+                                        this.toggleParentCheckbox(gender.id)
+                                    }
+                                />
+                                <b>{gender.name}</b> -
+                                <input
+                                    type="checkbox"
+                                    onClick={this.handleAllChecked}
+                                    value="checkedall"
+                                />{" "}
+                                Select All
+                                <button
+                                    onClick={() =>
+                                        this.deleteParentCategory(gender.id)
+                                    }
+                                    className="btn btn-sm btn-danger"
+                                >
+                                    <DeleteOutlined />
+                                </button>
+                                {this.state.trashedClassification.length >
+                                    0 && (
                                     <button
                                         onClick={() =>
-                                            this.deleteParentCategory(gender.id)
-                                        }
-                                        className="btn btn-sm btn-danger"
-                                    >
-                                        <DeleteOutlined />
-                                    </button>
-                                    {this.state.trashedClassification.length >
-                                        0 && (
-                                        <button
-                                            onClick={() =>
-                                                this.restoreClassifications(
-                                                    gender.id
-                                                )
-                                            }
-                                            className="btn btn-sm btn-success"
-                                        >
-                                            Restore Deleted Classifications
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={() => this.deleteAllSelected()}
-                                        className="btn btn-sm btn-danger"
-                                    >
-                                        Delete All Selected
-                                    </button>
-                                    {gender.is_checked &&
-                                        gender.item_classifications.map(
-                                            (classification, i) => (
-                                                <div key={i}>
-                                                    <label>
-                                                        <input
-                                                            key={
-                                                                classification.id
-                                                            }
-                                                            type="checkbox"
-                                                            checked={
-                                                                classification.is_checked
-                                                            }
-                                                            onChange={() =>
-                                                                this.toggleFirstChildCheckbox(
-                                                                    classification.id
-                                                                )
-                                                            }
-                                                            id="checkboxFirstChild"
-                                                        />
-                                                        <b>
-                                                            {
-                                                                classification.name
-                                                            }
-                                                        </b>
-                                                        -
-                                                        <input
-                                                            type="checkbox"
-                                                            onClick={
-                                                                this
-                                                                    .checkAllFirstChildDescendants
-                                                            }
-                                                        />{" "}
-                                                        Select All
-                                                        <button
-                                                            onClick={() =>
-                                                                this.deleteFirstChildCategory(
-                                                                    classification.id
-                                                                )
-                                                            }
-                                                            className="btn btn-sm btn-danger"
-                                                        >
-                                                            <DeleteOutlined />
-                                                        </button>
-                                                        {classification.is_checked &&
-                                                            classification.types.map(
-                                                                (type, i) => (
-                                                                    <div
-                                                                        key={i}
-                                                                    >
-                                                                        <CheckboxesSecondChild
-                                                                            key={
-                                                                                type.id
-                                                                            }
-                                                                            deleteSecondChildCategory={
-                                                                                this
-                                                                                    .deleteSecondChildCategory
-                                                                            }
-                                                                            checkAllSecondChildDescendants={this.checkAllSecondChildDescendants(
-                                                                                type.id
-                                                                            )}
-                                                                            toggleSecondChildCheckbox={
-                                                                                this
-                                                                                    .toggleSecondChildCheckbox
-                                                                            }
-                                                                            checked={
-                                                                                type.is_checked
-                                                                            }
-                                                                            type={
-                                                                                type
-                                                                            }
-                                                                        />
-
-                                                                        {type.is_checked &&
-                                                                            type.items.map(
-                                                                                (
-                                                                                    item
-                                                                                ) => (
-                                                                                    <CheckboxesThirdChild
-                                                                                        key={
-                                                                                            item.id
-                                                                                        }
-                                                                                        deleteThirdChildCategory={
-                                                                                            this
-                                                                                                .deleteThirdChildCategory
-                                                                                        }
-                                                                                        toggleThirdChildCheckbox={
-                                                                                            this
-                                                                                                .toggleThirdChildCheckbox
-                                                                                        }
-                                                                                        checked={
-                                                                                            item.is_checked
-                                                                                        }
-                                                                                        item={
-                                                                                            item
-                                                                                        }
-                                                                                    />
-                                                                                )
-                                                                            )}
-                                                                    </div>
-                                                                )
-                                                            )}
-                                                    </label>
-                                                </div>
+                                            this.restoreClassifications(
+                                                gender.id
                                             )
-                                        )}
-                                </label>
+                                        }
+                                        className="btn btn-sm btn-success"
+                                    >
+                                        Restore Deleted Classifications
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => this.deleteAllSelected()}
+                                    className="btn btn-sm btn-danger"
+                                >
+                                    Delete All Selected
+                                </button>
+                                {gender.is_checked &&
+                                    gender.item_classifications.map(
+                                        (classification, i) => (
+                                            <div key={i}>
+                                                <input
+                                                    key={classification.id}
+                                                    type="checkbox"
+                                                    checked={
+                                                        classification.is_checked
+                                                    }
+                                                    onChange={() =>
+                                                        this.toggleFirstChildCheckbox(
+                                                            classification.id
+                                                        )
+                                                    }
+                                                    id="checkboxFirstChild"
+                                                />
+                                                <b>{classification.name}</b>
+                                                -
+                                                <input
+                                                    type="checkbox"
+                                                    onClick={
+                                                        this
+                                                            .checkAllFirstChildDescendants
+                                                    }
+                                                />{" "}
+                                                Select All
+                                                <button
+                                                    onClick={() =>
+                                                        this.deleteFirstChildCategory(
+                                                            classification.id
+                                                        )
+                                                    }
+                                                    className="btn btn-sm btn-danger"
+                                                >
+                                                    <DeleteOutlined />
+                                                </button>
+                                                {classification.is_checked &&
+                                                    classification.types.map(
+                                                        (type, i) => (
+                                                            <CheckboxesSecondChild
+                                                                key={type.id}
+                                                                deleteSecondChildCategory={
+                                                                    this
+                                                                        .deleteSecondChildCategory
+                                                                }
+                                                                checkAllSecondChildDescendants={this.checkAllSecondChildDescendants(
+                                                                    type.id
+                                                                )}
+                                                                toggleSecondChildCheckbox={
+                                                                    this
+                                                                        .toggleSecondChildCheckbox
+                                                                }
+                                                                checked={
+                                                                    type.is_checked
+                                                                }
+                                                                type={type}
+                                                                deleteThirdChildCategory={
+                                                                    this
+                                                                        .deleteThirdChildCategory
+                                                                }
+                                                                toggleThirdChildCheckbox={
+                                                                    this
+                                                                        .toggleThirdChildCheckbox
+                                                                }
+                                                            />
+                                                        )
+                                                    )}
+                                            </div>
+                                        )
+                                    )}
                             </div>
-                        ))
-                    ) : this.state.isAuthenticated ? (
-                        <button
-                            className="btn btn-sm btn-success"
-                            onClick={this.restoreAll}
-                        >
-                            Restore Gender
-                        </button>
-                    ) : (
-                        ""
-                    )}
-                </div>
+                        </div>
+                    ))
+                ) : this.state.isAuthenticated ? (
+                    <button
+                        className="btn btn-sm btn-success"
+                        onClick={this.restoreAll}
+                    >
+                        Restore Gender
+                    </button>
+                ) : (
+                    ""
+                )}
             </div>
         );
     }

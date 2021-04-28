@@ -12,21 +12,32 @@ code {
         monospace;
 }
 
-#checkboxFirstChild {
-    margin-left: 15px;
-}
-
-#checkboxSecondChild {
-    margin-left: 30px;
-}
-
-#checkboxThirdChild {
-    margin-left: 45px;
-}
-
 [data-theme="dark"] .site-layout-content {
     background: #141414;
 }
 [data-theme="dark"] .logo {
     background: rgba(255, 255, 255, 0.3);
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    margin: auto;
+}
+
+.flex-container > div {
+    margin-left: 15px;
+}
+
+.flex-container > div > div {
+    margin-left: 15px;
+}
+
+.flex-container > div > div > div {
+    margin-left: 15px;
+}
+
+.flex-container > div > div > div > div {
+    margin-left: 15px;
 }
